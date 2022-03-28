@@ -334,7 +334,7 @@ INSERT INTO tb_funcao
 VALUES ('HR_REP', 'Representante de RH', 4000, 9000);
 
 INSERT INTO tb_funcao
-VALUES ('PR_REP', 'Representante de Relações Pública', 4500, 10500);
+VALUES ('PR_REP', 'Representante de RelaçõesPública', 4500, 10500);
 
 /*
 SELECT *
