@@ -1,6 +1,7 @@
 /*
 Subconsultas de uma única linha retornam zero ou no máximo 1 linha
 Pode ser usada no where, having ou no from
+Não podem ser ordenadas
 */
 
 SELECT id_cliente, nome, sobrenome
@@ -24,6 +25,7 @@ HAVING AVG(preco) < (SELECT MAX(AVG(preco))
 ORDER BY id_tipo_produto;
 
 --subconsultas na clausula FROM são chamadas de visões inline 
+
 SELECT id_produto
 FROM (SELECT id_produto
       FROM tb_produtos
@@ -34,3 +36,82 @@ FROM tb_produtos p, (SELECT id_produto, COUNT(id_produto) count_produto
                      FROM tb_compras
                      GROUP BY id_produto) dados_compra
 WHERE p.id_produto = dados_compra.id_produto;
+
+/*
+Subconsultas de várias linhas retornam várias tuplas
+Podem ser usadas nos operadores IN, ANY e ALL (pode ser usado o NOT)
+*/
+
+SELECT id_produto, nm_produto
+FROM tb_produtos
+WHERE id_produto IN (1, 2, 3);
+
+SELECT id_produto, nm_produto
+FROM tb_produtos
+WHERE id_produto IN (SELECT id_produto
+                     FROM tb_produtos
+                     WHERE nm_produto LIKE '%e%');
+
+SELECT id_produto, nm_produto
+FROM tb_produtos
+WHERE id_produto NOT IN (SELECT id_produto
+                         FROM tb_compras);
+
+SELECT id_funcionario, nome, salario
+FROM tb_funcionarios
+WHERE salario < ANY(SELECT base_salario
+                    FROM tb_grades_salarios);
+
+SELECT id_funcionario, nome, salario
+FROM tb_funcionarios
+WHERE salario > ALL (SELECT teto_salario
+                     FROM tb_grades_salarios);
+
+SELECT id_produto, id_tipo_produto, nm_produto, preco
+FROM tb_produtos
+WHERE (id_tipo_produto, preco) IN (SELECT id_tipo_produto, MIN(preco)
+                                   FROM tb_produtos
+                                   GROUP BY id_tipo_produto);
+
+/*
+Subconsultas correlacionadas é executada uma vez para cada linha e trabalha com nulos
+Pode usar o EXITS ou o NOT EXITS para verificar se existe ou não
+*/
+
+SELECT id_produto, id_tipo_produto, nm_produto, preco
+FROM tb_produtos externa
+WHERE preco > (SELECT AVG(preco)
+               FROM tb_produtos interna
+               WHERE interna.id_tipo_produto = externa.id_tipo_produto);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
