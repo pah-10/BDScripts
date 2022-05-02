@@ -75,7 +75,7 @@ WHERE (id_tipo_produto, preco) IN (SELECT id_tipo_produto, MIN(preco)
 
 /*
 Subconsultas correlacionadas é executada uma vez para cada linha e trabalha com nulos
-Pode usar o EXITS ou o NOT EXITS para verificar se existe ou não
+Pode usar o EXITS ou o NOT EXITS para verificar se existe ou não (EXITS pode ser usados com valores literais tbm)
 */
 
 SELECT id_produto, id_tipo_produto, nm_produto, preco
@@ -84,34 +84,37 @@ WHERE preco > (SELECT AVG(preco)
                FROM tb_produtos interna
                WHERE interna.id_tipo_produto = externa.id_tipo_produto);
 
+SELECT id_funcionario, nome, sobrenome
+FROM tb_funcionarios externa
+WHERE EXISTS (SELECT id_funcionario
+              FROM tb_funcionarios interna
+              WHERE interna.id_gerente = externa.id_funcionario);
 
+SELECT id_funcionario, nome, sobrenome
+FROM tb_funcionarios externa
+WHERE EXISTS (SELECT 1
+              FROM tb_funcionarios interna
+              WHERE interna.id_gerente = externa.id_funcionario);
 
+SELECT id_produto, nm_produto
+FROM tb_produtos externa
+WHERE NOT EXISTS (SELECT 1
+                  FROM tb_compras interna
+                  WHERE interna.id_produto = externa.id_produto);
 
+SELECT id_tipo_produto, nm_tipo_produto
+FROM tb_tipos_produtos externa
+WHERE NOT EXISTS(SELECT 1
+                 FROM tb_produtos interna
+                 WHERE interna.id_tipo_produto = externa.id_tipo_produto);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT id_tipo_produto, nm_tipo_produto
+FROM tb_tipos_produtos 
+WHERE id_tipo_produto NOT IN (SELECT id_tipo_produto
+                              FROM tb_produtos);
+                              
+--usa o nvl para fazer o tratamento e retornar corretamente
+SELECT id_tipo_produto, nm_tipo_produto
+FROM tb_tipos_produtos 
+WHERE id_tipo_produto NOT IN (SELECT NVL(id_tipo_produto, 0)
+                              FROM tb_produtos);
