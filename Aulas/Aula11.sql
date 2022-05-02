@@ -212,3 +212,13 @@ WHERE (salario, NVL(percentual_comissao,0)) IN (SELECT salario, NVL(percentual_c
                                         FROM tb_empregado
                                         WHERE sobrenome = 'Kochhar')
 AND sobrenome != 'Kochhar';
+
+
+---4
+SELECT emp.id_empregado, emp.sobrenome, emp.id_departamento, loc.cidade
+FROM tb_empregado emp
+INNER JOIN tb_departamento dep ON (emp.id_departamento = dep.id_departamento)
+INNER JOIN tb_localizacao loc ON (dep.id_localizacao = loc.id_localizacao)
+WHERE cidade IN (SELECT cidade
+                FROM tb_localizacao
+                WHERE cidade LIKE('T%'));
