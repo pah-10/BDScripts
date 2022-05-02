@@ -23,3 +23,8 @@ HAVING AVG(preco) < (SELECT MAX(AVG(preco))
                      GROUP BY id_tipo_produto)
 ORDER BY id_tipo_produto;
 
+--subconsultas na clausula FROM são chamadas de visões inline 
+SELECT id_produto
+FROM (SELECT id_produto
+      FROM tb_produtos
+      WHERE id_produto < 3);
