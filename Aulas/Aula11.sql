@@ -156,3 +156,10 @@ ROLLBACK;
 SELECT salario
 FROM tb_funcionarios
 WHERE id_funcionario = 4;
+
+
+--não ira funcionar pois não existe tuplas que corresponda o delete
+DELETE
+FROM tb_funcionarios
+WHERE salario > (SELECT AVG(teto_salario)
+                 FROM tb_grades_salario);
