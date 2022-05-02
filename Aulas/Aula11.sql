@@ -163,3 +163,52 @@ DELETE
 FROM tb_funcionarios
 WHERE salario > (SELECT AVG(teto_salario)
                  FROM tb_grades_salario);
+
+
+--exes do slide 3
+
+
+--1
+SELECT sobrenome, id_departamento, salario
+FROM tb_empregado 
+WHERE (id_departamento, salario) IN (SELECT id_departamento, salario
+                                  FROM tb_empregado
+                                  WHERE percentual_comissao > 0);
+
+--prof
+SELECT sobrenome, id_departamento, salario
+FROM tb_empregado 
+WHERE (salario, id_departamento) IN (SELECT salario, id_departamento
+                                  FROM tb_empregado
+                                  WHERE percentual_comissao > 0);
+                                  
+--2
+SELECT emp.sobrenome, dep.nm_departamento, emp.salario
+FROM tb_empregado emp
+LEFT JOIN tb_departamento dep ON (emp.id_departamento = dep.id_departamento)
+WHERE (emp.salario, emp.percentual_comissao) IN (SELECT emp.salario, emp.percentual_comissao
+                                             FROM tb_empregado emp, tb_departamento dep
+                                             WHERE dep.id_localizacao = 1700);
+
+SELECT emp.sobrenome, dep.nm_departamento, emp.salario
+FROM tb_empregado emp
+LEFT JOIN tb_departamento dep ON (emp.id_departamento = dep.id_departamento)
+WHERE (emp.salario, NVL(emp.percentual_comissao,0)) IN (SELECT emp.salario, emp.percentual_comissao
+                                             FROM tb_empregado emp, tb_departamento dep
+                                             WHERE dep.id_localizacao = 1700);
+--prof
+SELECT emp.sobrenome, dep.nm_departamento, emp.salario
+FROM tb_empregado emp, tb_departamento dep
+WHERE emp.id_departamento = dep.id_departamento AND
+(salario, NVL(percentual_comissao,0)) IN (SELECT salario, NVL(percentual_comissao,0)
+                                          FROM tb_empregado emp, tb_departamento dep
+                                          WHERE emp.id_departamento = dep.id_departamento AND
+                                             dep.id_localizacao = 1700);
+
+---3 101
+SELECT id_empregado, sobrenome, salario
+FROM tb_empregado
+WHERE (salario, NVL(percentual_comissao,0)) IN (SELECT salario, NVL(percentual_comissao,0)
+                                        FROM tb_empregado
+                                        WHERE sobrenome = 'Kochhar')
+AND sobrenome != 'Kochhar';
