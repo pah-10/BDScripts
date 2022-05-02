@@ -118,3 +118,41 @@ SELECT id_tipo_produto, nm_tipo_produto
 FROM tb_tipos_produtos 
 WHERE id_tipo_produto NOT IN (SELECT NVL(id_tipo_produto, 0)
                               FROM tb_produtos);
+
+/*
+Subconsulta Alinhada
+*/
+
+SELECT id_tipo_produto, AVG(preco)
+FROM tb_produtos
+GROUP BY id_tipo_produto
+HAVING AVG(preco) < (SELECT MAX(AVG(preco))
+                    FROM tb_produtos
+                    WHERE id_produto IN (SELECT id_produto
+                                        FROM tb_compras
+                                        WHERE quantidade > 1)
+                    GROUP BY id_tipo_produto)
+ORDER BY id_tipo_produto;
+
+/*
+Subconsukta em update e delete
+*/
+
+SELECT salario
+FROM tb_funcionarios
+WHERE id_funcionario = 4;
+
+UPDATE tb_funcionarios
+SET salario = (SELECT AVG(teto_salario)
+               FROM tb_grades_salarios)
+WHERE id_funcionario = 4;
+
+SELECT salario
+FROM tb_funcionarios
+WHERE id_funcionario = 4;
+
+ROLLBACK;
+
+SELECT salario
+FROM tb_funcionarios
+WHERE id_funcionario = 4;
