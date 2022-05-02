@@ -28,3 +28,9 @@ SELECT id_produto
 FROM (SELECT id_produto
       FROM tb_produtos
       WHERE id_produto < 3);
+
+SELECT p.id_produto, preco, dados_compra.count_produto
+FROM tb_produtos p, (SELECT id_produto, COUNT(id_produto) count_produto
+                     FROM tb_compras
+                     GROUP BY id_produto) dados_compra
+WHERE p.id_produto = dados_compra.id_produto;
