@@ -181,17 +181,41 @@ ORDER BY constraint_name;
 
 --visões complexas
 
+CREATE VIEW view_tipos_e_produtos AS
+  SELECT p.id_produto, p.nm_produto nome_produto, tp.nm_tipo_produto nome_tipo_produto, p.preco
+  FROM tb_produtos p
+  FULL OUTER JOIN tb_tipos_produtos tp USING (id_tipo_produto)
+  ORDER BY p.id_produto;
 
+SELECT *
+FROM view_tipos_e_produtos;
 
+CREATE VIEW view_salarios_funcionarios AS
+  SELECT f.nome, f.sobrenome, f.cargo, f.salario, gs.id_salario
+  FROM tb_funcionarios f
+  INNER JOIN tb_grades_salarios gs ON f.salario BETWEEN gs.base_salario AND gs.teto_salario
+  ORDER BY gs.id_salario;
 
+DESCRIBE view_salarios_funcionarios;
 
+CREATE VIEW view_media_produtos AS
+  SELECT id_tipo_produto, AVG(preco) media_preco
+  FROM tb_produtos
+  WHERE preco < 15.00
+  GROUP BY id_tipo_produto
+  HAVING AVG(preco) > 13.00
+  ORDER BY id_tipo_produto;
 
+DESCRIBE view_media_produtos;
 
+--atualizando o corpo da view
+CREATE OR REPLACE VIEW view_media_produtos AS
+  SELECT id_tipo_produto, AVG(preco) media_preco
+  FROM tb_produtos
+  WHERE preco < 12.00
+  GROUP BY id_tipo_produto
+  HAVING AVG(preco) > 11.00
+  ORDER BY id_tipo_produto;
 
-
-
-
-
-
-
-
+ALTER VIEW view_produtos_baratos_2
+DROP CONSTRAINT view_produtos_baratos_2_preco;
